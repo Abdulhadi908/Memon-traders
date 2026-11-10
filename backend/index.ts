@@ -370,7 +370,7 @@ app.post('/api/orders/notify', async (req: Request, res: Response) => {
 const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
 if (fs.existsSync(frontendDistPath)) {
   app.use(express.static(frontendDistPath));
-  app.get('*', (req: Request, res: Response) => {
+  app.use((req: Request, res: Response) => {
     res.sendFile(path.join(frontendDistPath, 'index.html'));
   });
 }
