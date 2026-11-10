@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { notifyNewOrder } from './utils/audioAlert';
 
 export interface Category {
   id: string;
@@ -327,6 +328,11 @@ export const useStore = create<AppStoreState>()(
           products: updatedProducts,
           cart: []
         }));
+
+        // Ringtone chime alert on laptop and phone vibration/notification
+        try {
+          notifyNewOrder(newOrder);
+        } catch {}
 
         return newOrder;
       },

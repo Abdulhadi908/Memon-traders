@@ -19,17 +19,36 @@ import {
   ExternalLink,
   RefreshCw,
   TrendingUp,
-  Percent
+  Percent,
+  Volume2
 } from 'lucide-react';
 import { useStore } from '../store';
+import { playOrderRingtone, sendBrowserPushNotification } from '../utils/audioAlert';
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [incomingOrderAlert, setIncomingOrderAlert] = useState<any>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { orders, products, resetToDemoData } = useStore();
   const pendingOrders = orders.filter((o: any) => o.status === 'Pending' || o.status === 'Processing').length;
   const lowStockCount = products.filter((p: any) => p.stock < 10).length;
+
+  React.useEffect(() => {
+    const handleOrderEvent = (e: any) => {
+      const order = e.detail;
+      setIncomingOrderAlert(order);
+      playOrderRingtone();
+      sendBrowserPushNotification(
+        `🔔 New Order Received! (Rs. ${order.total})`,
+        `Customer: ${order.customerName} - ${order.city}`
+      );
+      setTimeout(() => setIncomingOrderAlert(null), 15000);
+    };
+
+    window.addEventListener('memon_order_placed', handleOrderEvent);
+    return () => window.removeEventListener('memon_order_placed', handleOrderEvent);
+  }, []);
 
   const handleAdminLogout = () => {
     navigate('/');
@@ -177,6 +196,19 @@ export default function AdminLayout() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Test Ringtone Button for Laptop/Phone */}
+            <button
+              onClick={() => {
+                playOrderRingtone();
+                sendBrowserPushNotification('🔔 Test Notification Ringtone', 'Sound & notifications are active on your device!');
+              }}
+              className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-xs font-bold flex items-center gap-1.5 transition shadow-2xs"
+              title="Click to test order ringtone and enable audio permissions"
+            >
+              <Volume2 className="w-3.5 h-3.5 text-amber-600" />
+              <span>Test Ringtone</span>
+            </button>
+
             {/* Live Shared Store Indicator */}
             <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200/60">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -192,6 +224,32 @@ export default function AdminLayout() {
             </Link>
           </div>
         </header>
+
+        {/* Live Incoming Order Alert Banner */}
+        {incomingOrderAlert && (
+          <div className="bg-emerald-600 text-white px-4 py-3 flex items-center justify-between shadow-md border-b border-emerald-700 transition">
+            <div className="flex items-center gap-2 text-xs font-bold">
+              <Bell className="w-4 h-4 animate-bounce text-amber-300" />
+              <span>
+                🔔 NEW ORDER RECEIVED! Order #{incomingOrderAlert.id} • Rs. {incomingOrderAlert.total.toLocaleString()} from {incomingOrderAlert.customerName} ({incomingOrderAlert.city})
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={playOrderRingtone}
+                className="px-2.5 py-1 bg-white text-emerald-950 font-bold rounded text-[11px] shadow-xs hover:bg-emerald-50"
+              >
+                Replay Ringtone
+              </button>
+              <button
+                onClick={() => setIncomingOrderAlert(null)}
+                className="text-white hover:text-emerald-200 font-bold px-1.5"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Sub-view Outlet */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#F6F5F2]">

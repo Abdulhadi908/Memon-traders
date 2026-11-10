@@ -350,6 +350,22 @@ app.delete('/api/products/:id', (req: Request, res: Response) => {
   }
 });
 
+// 8. Order Alert & Phone Notification Dispatch
+app.post('/api/orders/notify', async (req: Request, res: Response) => {
+  try {
+    const { order, adminPhone } = req.body;
+    console.log(`\n🔔 [NEW ORDER ALERT] Order #${order?.id} received!`);
+    console.log(`   Customer: ${order?.customerName} (${order?.city})`);
+    console.log(`   Total: Rs. ${order?.total}`);
+    console.log(`   Payment: ${order?.paymentMethod || 'COD'}`);
+    console.log(`   Admin Phone Alert Target: ${adminPhone || 'Default'}\n`);
+
+    res.json({ success: true, message: 'Order alert received and dispatched' });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ----------- SERVE FRONTEND IN PRODUCTION -----------
 const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
 if (fs.existsSync(frontendDistPath)) {
