@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Truck, Check, Eye, Search, Filter, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, Truck, Check, Eye, Search, Filter, CheckCircle2, FileText } from 'lucide-react';
 import { useStore, Order } from '../../store';
+import OrderReceiptModal from '../../components/OrderReceiptModal';
 
 export default function AdminOrders() {
   const { orders, updateOrderStatus, completeAndRemoveOrder } = useStore();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [receiptOrder, setReceiptOrder] = useState<Order | null>(null);
 
   const filtered = orders.filter(o => {
     const matchesSearch = 
@@ -116,6 +118,14 @@ export default function AdminOrders() {
                   <td className="px-5 py-3.5 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button
+                        onClick={() => setReceiptOrder(order)}
+                        className="px-2.5 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold rounded-lg text-xs flex items-center gap-1.5 transition border border-stone-200/80"
+                        title="Download / Print Official Receipt"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-stone-600" />
+                        <span>Receipt</span>
+                      </button>
+                      <button
                         onClick={() => {
                           if (confirm(`Complete order #${order.id} and remove it permanently from both admin and customer?`)) {
                             completeAndRemoveOrder(order.id);
@@ -206,19 +216,28 @@ export default function AdminOrders() {
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between gap-3">
-              <button
-                onClick={() => {
-                  if (confirm(`Complete order #${selectedOrder.id} and remove it permanently from both admin and user?`)) {
-                    completeAndRemoveOrder(selectedOrder.id);
-                    setSelectedOrder(null);
-                  }
-                }}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 transition shadow"
-              >
-                <CheckCircle2 className="w-4 h-4" />
-                <span>Complete Order & Delete</span>
-              </button>
+            <div className="mt-6 pt-4 border-t border-stone-100 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setReceiptOrder(selectedOrder)}
+                  className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold rounded-lg text-xs flex items-center gap-1.5 transition border border-stone-300"
+                >
+                  <FileText className="w-4 h-4 text-stone-600" />
+                  <span>Download / Print Receipt</span>
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm(`Complete order #${selectedOrder.id} and remove it permanently from both admin and user?`)) {
+                      completeAndRemoveOrder(selectedOrder.id);
+                      setSelectedOrder(null);
+                    }
+                  }}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 transition shadow"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Complete Order & Delete</span>
+                </button>
+              </div>
               <button
                 onClick={() => setSelectedOrder(null)}
                 className="px-5 py-2 bg-stone-900 text-white rounded-lg font-medium text-xs hover:bg-stone-800 transition"
@@ -229,6 +248,12 @@ export default function AdminOrders() {
           </div>
         </div>
       )}
+
+      {/* Printable / Downloadable Order Receipt Modal */}
+      <OrderReceiptModal
+        order={receiptOrder}
+        onClose={() => setReceiptOrder(null)}
+      />
     </div>
   );
 }

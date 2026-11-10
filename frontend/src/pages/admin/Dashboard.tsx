@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   TrendingUp, 
@@ -12,12 +12,15 @@ import {
   Receipt,
   ExternalLink,
   Plus,
-  CheckCircle2
+  CheckCircle2,
+  FileText
 } from 'lucide-react';
-import { useStore } from '../../store';
+import { useStore, Order } from '../../store';
+import OrderReceiptModal from '../../components/OrderReceiptModal';
 
 export default function Dashboard() {
   const { products, orders, customers, expenses, completeAndRemoveOrder } = useStore();
+  const [receiptOrder, setReceiptOrder] = useState<Order | null>(null);
 
   const totalRevenue = orders.reduce((sum, o) => o.status !== 'Cancelled' ? sum + o.total : sum, 0);
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
@@ -154,6 +157,14 @@ export default function Dashboard() {
                     <td className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
+                          onClick={() => setReceiptOrder(order)}
+                          className="px-2 py-1 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold rounded text-[11px] flex items-center gap-1 transition border border-stone-200"
+                          title="Download / View Receipt"
+                        >
+                          <FileText className="w-3 h-3 text-stone-600" />
+                          <span>Receipt</span>
+                        </button>
+                        <button
                           onClick={() => {
                             if (confirm(`Complete order #${order.id} and remove from admin and user?`)) {
                               completeAndRemoveOrder(order.id);
@@ -223,6 +234,12 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Printable / Downloadable Order Receipt Modal */}
+      <OrderReceiptModal
+        order={receiptOrder}
+        onClose={() => setReceiptOrder(null)}
+      />
     </div>
   );
 }

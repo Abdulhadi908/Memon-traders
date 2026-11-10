@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Banknote, Lock } from 'lucide-react';
-import { useStore, Product } from '../../store';
+import { CheckCircle2, Banknote, Lock, FileText } from 'lucide-react';
+import { useStore, Product, Order } from '../../store';
+import OrderReceiptModal from '../../components/OrderReceiptModal';
 
 export default function Checkout() {
   const { cart, products, placeOrder } = useStore();
+  const [showReceipt, setShowReceipt] = useState(false);
 
   const cartWithProducts = cart.map(item => {
     const product = products.find(p => p.id === item.productId);
@@ -82,11 +84,26 @@ export default function Checkout() {
           <p><strong>Total Amount:</strong> Rs. {placedOrder.total.toLocaleString()}</p>
         </div>
 
-        <div className="mt-6 flex justify-center gap-3">
-          <Link to="/shop" className="px-5 py-2.5 bg-[#F85606] text-white text-xs font-bold rounded">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <button
+            onClick={() => setShowReceipt(true)}
+            className="px-5 py-2.5 bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold rounded-lg flex items-center gap-2 shadow-xs transition"
+          >
+            <FileText className="w-4 h-4 text-amber-400" />
+            <span>Download Official Receipt</span>
+          </button>
+          <Link to="/shop" className="px-5 py-2.5 bg-[#F85606] hover:bg-[#e04c00] text-white text-xs font-bold rounded-lg transition">
             Continue Shopping
           </Link>
         </div>
+
+        {/* Receipt Modal */}
+        {showReceipt && (
+          <OrderReceiptModal
+            order={placedOrder}
+            onClose={() => setShowReceipt(false)}
+          />
+        )}
       </div>
     );
   }

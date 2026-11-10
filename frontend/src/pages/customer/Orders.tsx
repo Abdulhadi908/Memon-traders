@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Package, Truck, Clock, CheckCircle2, Search, ArrowRight, ExternalLink } from 'lucide-react';
-import { useStore } from '../../store';
+import { Package, Truck, Clock, CheckCircle2, Search, ArrowRight, ExternalLink, FileText } from 'lucide-react';
+import { useStore, Order } from '../../store';
+import OrderReceiptModal from '../../components/OrderReceiptModal';
 
 export default function Orders() {
   const { orders } = useStore();
   const [searchTracking, setSearchTracking] = useState('');
+  const [receiptOrder, setReceiptOrder] = useState<Order | null>(null);
 
   const filteredOrders = orders.filter(o => 
     searchTracking.trim() === '' || 
@@ -92,7 +94,15 @@ export default function Orders() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <button
+                    onClick={() => setReceiptOrder(order)}
+                    className="px-3 py-1 bg-stone-900 hover:bg-stone-800 text-white rounded-lg font-semibold text-xs flex items-center gap-1.5 shadow-xs transition"
+                    title="Download and print official invoice"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Download Receipt</span>
+                  </button>
                   <span className="text-[10px] font-mono text-stone-400">ID: #{order.id}</span>
                   <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusBadge(order.status)}`}>
                     {order.status}
@@ -107,7 +117,7 @@ export default function Orders() {
                     <Truck className="w-4 h-4 text-stone-700" />
                     <span>Courier Tracking: <strong className="font-mono text-stone-900">{order.trackingNumber}</strong></span>
                   </div>
-                  <span className="text-[11px] text-stone-500">Express Delivery via Aramex</span>
+                  <span className="text-[11px] text-stone-500">Express Delivery within Karachi (TCS / Leopard Courier)</span>
                 </div>
 
                 {/* Progress bar state */}
@@ -156,6 +166,12 @@ export default function Orders() {
           ))}
         </div>
       )}
+
+      {/* Printable / Downloadable Order Receipt Modal */}
+      <OrderReceiptModal
+        order={receiptOrder}
+        onClose={() => setReceiptOrder(null)}
+      />
     </div>
   );
 }

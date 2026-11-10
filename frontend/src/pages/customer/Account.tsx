@@ -17,9 +17,11 @@ import {
   Save,
   KeyRound,
   ShoppingBag,
-  Sparkles
+  Sparkles,
+  FileText
 } from 'lucide-react';
-import { useStore } from '../../store';
+import { useStore, Order } from '../../store';
+import OrderReceiptModal from '../../components/OrderReceiptModal';
 
 const KARACHI_AREAS = [
   'Clifton',
@@ -53,6 +55,7 @@ export default function Account() {
   const { currentUser, updateProfile, logoutUser, orders, wishlist } = useStore();
 
   const [activeTab, setActiveTab] = useState<'profile' | 'address' | 'security' | 'orders'>('profile');
+  const [receiptOrder, setReceiptOrder] = useState<Order | null>(null);
 
   // Profile fields state
   const [name, setName] = useState(currentUser?.name || '');
@@ -589,13 +592,21 @@ export default function Account() {
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-4 self-end sm:self-center">
-                        <span className="font-mono font-bold text-base text-stone-900">
+                      <div className="flex flex-wrap items-center gap-2 self-end sm:self-center">
+                        <span className="font-mono font-bold text-base text-stone-900 mr-2">
                           Rs. {o.total.toLocaleString()}
                         </span>
+                        <button
+                          onClick={() => setReceiptOrder(o)}
+                          className="px-2.5 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 rounded-lg font-semibold text-xs transition flex items-center gap-1 border border-stone-200"
+                          title="Download Order Receipt"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-stone-600" />
+                          <span>Receipt</span>
+                        </button>
                         <Link
                           to="/orders"
-                          className="px-3 py-1.5 bg-white border border-stone-300 hover:bg-stone-50 rounded-lg text-stone-800 font-semibold transition"
+                          className="px-3 py-1.5 bg-white border border-stone-300 hover:bg-stone-50 rounded-lg text-stone-800 font-semibold text-xs transition"
                         >
                           Track
                         </Link>
@@ -608,6 +619,12 @@ export default function Account() {
           )}
         </div>
       </div>
+
+      {/* Printable / Downloadable Order Receipt Modal */}
+      <OrderReceiptModal
+        order={receiptOrder}
+        onClose={() => setReceiptOrder(null)}
+      />
     </div>
   );
 }
