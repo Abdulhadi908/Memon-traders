@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Truck, Check, Eye, Search, Filter } from 'lucide-react';
+import { ShoppingBag, Truck, Check, Eye, Search, Filter, CheckCircle2 } from 'lucide-react';
 import { useStore, Order } from '../../store';
 
 export default function AdminOrders() {
-  const { orders, updateOrderStatus } = useStore();
+  const { orders, updateOrderStatus, completeAndRemoveOrder } = useStore();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -114,12 +114,26 @@ export default function AdminOrders() {
                     </select>
                   </td>
                   <td className="px-5 py-3.5 text-right">
-                    <button
-                      onClick={() => setSelectedOrder(order)}
-                      className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold rounded-lg text-xs"
-                    >
-                      Inspect
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => {
+                          if (confirm(`Complete order #${order.id} and remove it permanently from both admin and customer?`)) {
+                            completeAndRemoveOrder(order.id);
+                          }
+                        }}
+                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 transition shadow-xs"
+                        title="Complete order and remove from admin and user"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Complete Order</span>
+                      </button>
+                      <button
+                        onClick={() => setSelectedOrder(order)}
+                        className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-semibold rounded-lg text-xs"
+                      >
+                        Inspect
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -192,12 +206,24 @@ export default function AdminOrders() {
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-stone-100 flex justify-end">
+            <div className="mt-6 pt-4 border-t border-stone-100 flex items-center justify-between gap-3">
+              <button
+                onClick={() => {
+                  if (confirm(`Complete order #${selectedOrder.id} and remove it permanently from both admin and user?`)) {
+                    completeAndRemoveOrder(selectedOrder.id);
+                    setSelectedOrder(null);
+                  }
+                }}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 transition shadow"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Complete Order & Delete</span>
+              </button>
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="px-5 py-2 bg-stone-900 text-white rounded font-medium text-xs hover:bg-stone-800"
+                className="px-5 py-2 bg-stone-900 text-white rounded-lg font-medium text-xs hover:bg-stone-800 transition"
               >
-                Done
+                Close
               </button>
             </div>
           </div>

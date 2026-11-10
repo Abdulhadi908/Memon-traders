@@ -11,12 +11,13 @@ import {
   AlertTriangle,
   Receipt,
   ExternalLink,
-  Plus
+  Plus,
+  CheckCircle2
 } from 'lucide-react';
 import { useStore } from '../../store';
 
 export default function Dashboard() {
-  const { products, orders, customers, expenses } = useStore();
+  const { products, orders, customers, expenses, completeAndRemoveOrder } = useStore();
 
   const totalRevenue = orders.reduce((sum, o) => o.status !== 'Cancelled' ? sum + o.total : sum, 0);
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
@@ -151,9 +152,23 @@ export default function Dashboard() {
                       </span>
                     </td>
                     <td className="px-5 py-3.5 text-right">
-                      <Link to="/admin/orders" className="text-stone-900 hover:text-amber-700 font-semibold underline">
-                        Manage
-                      </Link>
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => {
+                            if (confirm(`Complete order #${order.id} and remove from admin and user?`)) {
+                              completeAndRemoveOrder(order.id);
+                            }
+                          }}
+                          className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded text-[11px] flex items-center gap-1 transition shadow-xs"
+                          title="Complete and delete order"
+                        >
+                          <CheckCircle2 className="w-3 h-3" />
+                          <span>Complete</span>
+                        </button>
+                        <Link to="/admin/orders" className="text-stone-700 hover:text-amber-700 font-semibold underline text-xs">
+                          Manage
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}

@@ -136,6 +136,8 @@ interface AppStoreState {
   deleteCategory: (id: string) => void;
 
   updateOrderStatus: (orderId: string, status: Order['status']) => void;
+  deleteOrder: (orderId: string) => void;
+  completeAndRemoveOrder: (orderId: string) => void;
   
   addExpense: (expense: Omit<Expense, 'id'>) => void;
   deleteExpense: (id: string) => void;
@@ -368,6 +370,14 @@ export const useStore = create<AppStoreState>()(
 
       updateOrderStatus: (orderId, status) => set((state) => ({
         orders: state.orders.map(o => o.id === orderId ? { ...o, status } : o)
+      })),
+
+      deleteOrder: (orderId) => set((state) => ({
+        orders: state.orders.filter(o => o.id !== orderId)
+      })),
+
+      completeAndRemoveOrder: (orderId) => set((state) => ({
+        orders: state.orders.filter(o => o.id !== orderId)
       })),
 
       addExpense: (expense) => set((state) => ({
