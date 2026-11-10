@@ -17,22 +17,23 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../store';
 
-const PAKISTANI_CITIES = [
-  'Karachi',
-  'Lahore',
-  'Islamabad',
-  'Rawalpindi',
-  'Faisalabad',
-  'Multan',
-  'Peshawar',
-  'Quetta',
-  'Hyderabad',
-  'Gujranwala',
-  'Sialkot',
-  'Sukkur',
-  'Bahawalpur',
-  'Mardan',
-  'Abbottabad'
+const KARACHI_AREAS = [
+  'Clifton',
+  'DHA (Defence Housing Authority)',
+  'Gulshan-e-Iqbal',
+  'PECHS / Tariq Road',
+  'Bahadurabad',
+  'North Nazimabad',
+  'Nazimabad',
+  'Saddar / Civil Lines',
+  'Gulistan-e-Johar',
+  'Federal B Area',
+  'Malir / Malir Cantt',
+  'Korangi',
+  'Bahria Town Karachi',
+  'North Karachi',
+  'Garden / Soldier Bazaar',
+  'Other Karachi Town'
 ];
 
 export default function AuthPage() {
@@ -66,9 +67,10 @@ export default function AuthPage() {
     setSuccess('');
     setLoading(true);
 
+    const API_BASE = import.meta.env.VITE_API_URL || '';
     const endpoint = isLogin 
-      ? 'http://localhost:5000/api/auth/login' 
-      : 'http://localhost:5000/api/auth/signup';
+      ? `${API_BASE}/api/auth/login` 
+      : `${API_BASE}/api/auth/signup`;
 
     const payload = isLogin 
       ? { email, password } 
@@ -264,7 +266,9 @@ export default function AuthPage() {
           {!isLogin && (
             <>
               <div>
-                <label className="block text-stone-700 font-semibold mb-1">City in Pakistan</label>
+                <label className="block text-stone-700 font-semibold mb-1">
+                  Karachi Area (Delivery Exclusive to Karachi)
+                </label>
                 <div className="relative">
                   <Building className="w-4 h-4 absolute left-3 top-3 text-stone-400" />
                   <select
@@ -272,11 +276,14 @@ export default function AuthPage() {
                     onChange={(e) => setCity(e.target.value)}
                     className="w-full bg-stone-50 border border-stone-200 rounded-lg pl-9 pr-3 py-2.5 text-stone-800 focus:outline-none focus:border-[#F85606] transition"
                   >
-                    {PAKISTANI_CITIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
+                    {KARACHI_AREAS.map((c) => (
+                      <option key={c} value={`Karachi - ${c}`}>Karachi - {c}</option>
                     ))}
                   </select>
                 </div>
+                <span className="text-[10px] text-emerald-700 font-medium block mt-1">
+                  ✓ Fast courier & rider delivery exclusively within Karachi city.
+                </span>
               </div>
 
               <div>

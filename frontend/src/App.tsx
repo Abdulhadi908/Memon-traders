@@ -44,8 +44,9 @@ function App() {
           <Route path="/signup" element={<AuthPage />} />
         </Route>
 
-        {/* Admin authentication */}
-        <Route path="/admin/login" element={<AdminLogin />} />
+        {/* Admin direct URL routes – No password required */}
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+        <Route path="/admin/login" element={<Navigate to="/admin/dashboard" replace />} />
 
         {/* Admin routes – wrapped with AdminLayout */}
         <Route element={<AdminLayout />}>

@@ -38,18 +38,9 @@ export default function Orders() {
             Order Tracking & History
           </h1>
           <p className="text-xs text-stone-500 mt-1">
-            Real-time fulfillment updates directly synced with the Admin Business Dashboard.
+            Real-time fulfillment and rider delivery tracking for your orders across Karachi.
           </p>
         </div>
-
-        {/* Quick Link to Admin to test status change */}
-        <Link
-          to="/admin/orders"
-          className="text-xs bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold px-3.5 py-2 rounded flex items-center gap-1.5 transition shadow-xs"
-        >
-          <ExternalLink className="w-3.5 h-3.5" />
-          <span>Update Status in Admin Portal</span>
-        </Link>
       </div>
 
       {/* Filter / Search Bar */}
@@ -93,7 +84,7 @@ export default function Orders() {
                   </div>
                   <div>
                     <span className="text-stone-500 block text-[10px] uppercase font-semibold">Total Amount</span>
-                    <span className="font-semibold text-stone-900">AED {order.total.toFixed(2)}</span>
+                    <span className="font-semibold text-stone-900">Rs. {order.total.toLocaleString()}</span>
                   </div>
                   <div>
                     <span className="text-stone-500 block text-[10px] uppercase font-semibold">Ship To</span>
@@ -155,7 +146,7 @@ export default function Orders() {
                     </div>
                     <div className="text-right">
                       <span className="text-xs font-semibold text-stone-900">
-                        AED {((item.product?.price || 0) * item.quantity).toFixed(2)}
+                        Rs. {(((item.product?.price || 0) * item.quantity)).toLocaleString()}
                       </span>
                     </div>
                   </div>

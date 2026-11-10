@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ShieldCheck, CheckCircle2, CreditCard, Banknote, Smartphone, Lock } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { CheckCircle2, Banknote, Lock } from 'lucide-react';
 import { useStore, Product } from '../../store';
 
 export default function Checkout() {
-  const navigate = useNavigate();
   const { cart, products, placeOrder } = useStore();
 
   const cartWithProducts = cart.map(item => {
@@ -22,8 +21,9 @@ export default function Checkout() {
     phone: '',
     address: '',
     city: 'Karachi',
-    paymentMethod: 'COD' as 'COD' | 'JazzCash' | 'EasyPaisa' | 'HBL-Card'
+    paymentMethod: 'COD' as 'COD'
   });
+  
 
   const [placedOrder, setPlacedOrder] = useState<any | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -147,23 +147,29 @@ export default function Checkout() {
                 />
               </div>
               <div>
-                <label className="block text-stone-600 font-semibold mb-1">City</label>
+                <label className="block text-stone-600 font-semibold mb-1">Karachi Town / Area</label>
                 <select
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  className="w-full border border-stone-200 rounded p-2 text-stone-900 focus:outline-none"
+                  className="w-full border border-stone-200 rounded p-2 text-stone-900 focus:outline-none focus:border-orange-500"
                 >
-                  <option value="Karachi">Karachi</option>
-                  <option value="Lahore">Lahore</option>
-                  <option value="Islamabad">Islamabad</option>
-                  <option value="Rawalpindi">Rawalpindi</option>
-                  <option value="Faisalabad">Faisalabad</option>
-                  <option value="Multan">Multan</option>
-                  <option value="Peshawar">Peshawar</option>
-                  <option value="Quetta">Quetta</option>
-                  <option value="Sialkot">Sialkot</option>
-                  <option value="Hyderabad">Hyderabad</option>
+                  <option value="Karachi - Clifton">Karachi - Clifton</option>
+                  <option value="Karachi - DHA">Karachi - DHA</option>
+                  <option value="Karachi - Gulshan-e-Iqbal">Karachi - Gulshan-e-Iqbal</option>
+                  <option value="Karachi - PECHS / Tariq Road">Karachi - PECHS / Tariq Road</option>
+                  <option value="Karachi - Bahadurabad">Karachi - Bahadurabad</option>
+                  <option value="Karachi - North Nazimabad">Karachi - North Nazimabad</option>
+                  <option value="Karachi - Saddar">Karachi - Saddar</option>
+                  <option value="Karachi - Gulistan-e-Johar">Karachi - Gulistan-e-Johar</option>
+                  <option value="Karachi - Federal B Area">Karachi - Federal B Area</option>
+                  <option value="Karachi - Malir / Cantt">Karachi - Malir / Cantt</option>
+                  <option value="Karachi - Korangi">Karachi - Korangi</option>
+                  <option value="Karachi - Bahria Town">Karachi - Bahria Town</option>
+                  <option value="Karachi - Other Town">Karachi - Other Town</option>
                 </select>
+                <span className="text-[10px] text-emerald-700 font-medium mt-1 block">
+                  ✓ Doorstep delivery exclusively within Karachi city.
+                </span>
               </div>
             </div>
           </div>
@@ -174,11 +180,12 @@ export default function Checkout() {
               <Lock className="w-4 h-4 text-stone-400" />
             </h2>
             <div className="space-y-3">
-              <label className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer ${formData.paymentMethod === 'COD' ? 'border-[#F85606] bg-orange-50/50' : 'border-stone-200'}`}>
+              <label className="flex items-center justify-between p-3 border border-[#F85606] rounded-lg bg-orange-50/50 cursor-pointer">
                 <div className="flex items-center gap-2.5">
                   <input
                     type="radio"
                     name="payment"
+                    value="COD"
                     checked={formData.paymentMethod === 'COD'}
                     onChange={() => setFormData({ ...formData, paymentMethod: 'COD' })}
                     className="accent-orange-600"
@@ -188,52 +195,10 @@ export default function Checkout() {
                 </div>
                 <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Popular</span>
               </label>
-
-              <label className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer ${formData.paymentMethod === 'JazzCash' ? 'border-[#F85606] bg-orange-50/50' : 'border-stone-200'}`}>
-                <div className="flex items-center gap-2.5">
-                  <input
-                    type="radio"
-                    name="payment"
-                    checked={formData.paymentMethod === 'JazzCash'}
-                    onChange={() => setFormData({ ...formData, paymentMethod: 'JazzCash' })}
-                    className="accent-orange-600"
-                  />
-                  <Smartphone className="w-4 h-4 text-red-600" />
-                  <span className="text-xs font-bold text-stone-800">JazzCash Mobile Wallet</span>
-                </div>
-              </label>
-
-              <label className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer ${formData.paymentMethod === 'EasyPaisa' ? 'border-[#F85606] bg-orange-50/50' : 'border-stone-200'}`}>
-                <div className="flex items-center gap-2.5">
-                  <input
-                    type="radio"
-                    name="payment"
-                    checked={formData.paymentMethod === 'EasyPaisa'}
-                    onChange={() => setFormData({ ...formData, paymentMethod: 'EasyPaisa' })}
-                    className="accent-orange-600"
-                  />
-                  <Smartphone className="w-4 h-4 text-emerald-600" />
-                  <span className="text-xs font-bold text-stone-800">EasyPaisa Account</span>
-                </div>
-              </label>
-
-              <label className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer ${formData.paymentMethod === 'HBL-Card' ? 'border-[#F85606] bg-orange-50/50' : 'border-stone-200'}`}>
-                <div className="flex items-center gap-2.5">
-                  <input
-                    type="radio"
-                    name="payment"
-                    checked={formData.paymentMethod === 'HBL-Card'}
-                    onChange={() => setFormData({ ...formData, paymentMethod: 'HBL-Card' })}
-                    className="accent-orange-600"
-                  />
-                  <CreditCard className="w-4 h-4 text-blue-600" />
-                  <span className="text-xs font-bold text-stone-800">Credit / Debit Card</span>
-                </div>
-              </label>
             </div>
           </div>
         </div>
-
+ 
         <div className="md:col-span-1">
           <div className="bg-white p-5 rounded-lg border border-stone-200 shadow-xs sticky top-24">
             <h2 className="font-bold text-sm text-stone-900 pb-3 border-b border-stone-100">
@@ -265,6 +230,7 @@ export default function Checkout() {
           </div>
         </div>
       </form>
+    
     </div>
   );
 }

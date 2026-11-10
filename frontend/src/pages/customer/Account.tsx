@@ -21,22 +21,23 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../store';
 
-const PAKISTANI_CITIES = [
-  'Karachi',
-  'Lahore',
-  'Islamabad',
-  'Rawalpindi',
-  'Faisalabad',
-  'Multan',
-  'Peshawar',
-  'Quetta',
-  'Hyderabad',
-  'Gujranwala',
-  'Sialkot',
-  'Sukkur',
-  'Bahawalpur',
-  'Mardan',
-  'Abbottabad'
+const KARACHI_AREAS = [
+  'Clifton',
+  'DHA (Defence Housing Authority)',
+  'Gulshan-e-Iqbal',
+  'PECHS / Tariq Road',
+  'Bahadurabad',
+  'North Nazimabad',
+  'Nazimabad',
+  'Saddar / Civil Lines',
+  'Gulistan-e-Johar',
+  'Federal B Area',
+  'Malir / Malir Cantt',
+  'Korangi',
+  'Bahria Town Karachi',
+  'North Karachi',
+  'Garden / Soldier Bazaar',
+  'Other Karachi Town'
 ];
 
 const PROVINCES = [
@@ -84,18 +85,19 @@ export default function Account() {
         <p className="text-xs text-stone-500 mb-6">
           Access your personalized profile, order history, tracking updates, and saved shipping addresses.
         </p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            to="/login"
-            className="px-6 py-2.5 bg-[#F85606] hover:bg-[#e04c00] text-white font-bold rounded-xl text-xs transition shadow"
-          >
-            Sign In Now
-          </Link>
+        {/* The requested oval-shaped container with 1st Sign Up and 2nd Login */}
+        <div className="bg-stone-100 p-2 rounded-[50px] border-2 border-orange-400 shadow-md flex items-center justify-between gap-3 max-w-xs mx-auto">
           <Link
             to="/signup"
-            className="px-6 py-2.5 border border-stone-300 hover:bg-stone-50 text-stone-800 font-bold rounded-xl text-xs transition"
+            className="flex-1 py-3 px-5 rounded-full bg-[#F85606] hover:bg-[#e04c00] text-white font-bold text-xs uppercase tracking-wider shadow text-center transition"
           >
-            Create Free Account
+            Sign Up
+          </Link>
+          <Link
+            to="/login"
+            className="flex-1 py-3 px-5 rounded-full bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs uppercase tracking-wider shadow text-center transition"
+          >
+            Login
           </Link>
         </div>
       </div>
@@ -120,7 +122,7 @@ export default function Account() {
     try {
       const token = localStorage.getItem('memon_user_token');
       if (token) {
-        await fetch('http://localhost:5000/api/user/profile', {
+        await fetch(`${import.meta.env.VITE_API_URL || ''}/api/user/profile`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -161,7 +163,7 @@ export default function Account() {
 
     try {
       const token = localStorage.getItem('memon_user_token');
-      const res = await fetch('http://localhost:5000/api/user/change-password', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/user/change-password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -413,14 +415,14 @@ export default function Account() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-stone-700 font-semibold mb-1">City</label>
+                    <label className="block text-stone-700 font-semibold mb-1">Karachi Area</label>
                     <select
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       className="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-stone-800 focus:outline-none focus:border-[#F85606]"
                     >
-                      {PAKISTANI_CITIES.map((c) => (
-                        <option key={c} value={c}>{c}</option>
+                      {KARACHI_AREAS.map((c) => (
+                        <option key={c} value={`Karachi - ${c}`}>Karachi - {c}</option>
                       ))}
                     </select>
                   </div>

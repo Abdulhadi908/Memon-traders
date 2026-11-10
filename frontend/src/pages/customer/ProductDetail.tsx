@@ -10,7 +10,8 @@ import {
   ArrowLeft, 
   Sparkles, 
   Check, 
-  Share2 
+  Share2,
+  ZoomIn 
 } from 'lucide-react';
 import { useStore } from '../../store';
 
@@ -25,6 +26,17 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState<number>(1);
   const [activeImg, setActiveImg] = useState<string>('');
   const [toast, setToast] = useState<string | null>(null);
+
+  // Auto zoom on hover states
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    const y = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+    setZoomPos({ x, y });
+  };
 
   React.useEffect(() => {
     if (product) {
@@ -97,18 +109,38 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {/* Main Photo */}
-          <div className="flex-1 aspect-[3/4] bg-stone-100 rounded-xl overflow-hidden shadow-xs relative">
+          {/* Main Photo with Automatic Zoom on Hover */}
+          <div 
+            onMouseEnter={() => setIsZoomed(true)}
+            onMouseLeave={() => setIsZoomed(false)}
+            onMouseMove={handleMouseMove}
+            className="flex-1 aspect-[3/4] bg-stone-100 rounded-xl overflow-hidden shadow-xs relative cursor-crosshair group select-none"
+          >
             <img 
               src={activeImg || product.image} 
               alt={product.name} 
-              className="w-full h-full object-cover object-top"
+              style={{
+                transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                transform: isZoomed ? 'scale(2.4)' : 'scale(1)',
+                transition: isZoomed ? 'transform-origin 0.04s ease-out, transform 0.2s ease-out' : 'transform 0.3s ease-out'
+              }}
+              className="w-full h-full object-cover object-top will-change-transform pointer-events-none"
             />
             {product.isNewArrival && (
-              <span className="absolute top-4 left-4 bg-stone-900 text-white text-[10px] font-bold tracking-widest px-2.5 py-1 uppercase rounded">
+              <span className="absolute top-4 left-4 bg-stone-900 text-white text-[10px] font-bold tracking-widest px-2.5 py-1 uppercase rounded pointer-events-none z-10">
                 NEW ATELIER PIECE
               </span>
             )}
+
+            {/* Subtle Zoom Pill Indicator */}
+            <div className={`absolute bottom-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-medium backdrop-blur-md transition-all duration-200 flex items-center gap-1.5 pointer-events-none z-10 ${
+              isZoomed 
+                ? 'bg-stone-900/85 text-amber-300 shadow-md' 
+                : 'bg-white/80 text-stone-700 shadow-xs group-hover:bg-white'
+            }`}>
+              <ZoomIn className="w-3 h-3" />
+              <span>{isZoomed ? 'Zoom 2.4x Active' : 'Hover to zoom image'}</span>
+            </div>
           </div>
         </div>
 
@@ -136,14 +168,14 @@ export default function ProductDetail() {
           <div className="mt-4 flex items-center justify-between pb-6 border-b border-stone-200">
             <div className="flex items-baseline gap-3">
               <span className="text-2xl font-serif font-semibold text-stone-900">
-                AED {product.price}
+                Rs. {product.price.toLocaleString()}
               </span>
               {product.originalPrice && (
                 <span className="text-sm text-stone-400 line-through">
-                  AED {product.originalPrice}
+                  Rs. {product.originalPrice.toLocaleString()}
                 </span>
               )}
-              <span className="text-[11px] text-stone-500">Inclusive of VAT</span>
+              <span className="text-[11px] text-stone-500">All Taxes Included (PKR)</span>
             </div>
 
             <div className="flex items-center gap-1.5 text-xs text-stone-600">
@@ -166,7 +198,7 @@ export default function ProductDetail() {
           <div className="mt-6">
             <div className="flex justify-between items-center text-xs mb-2">
               <span className="font-semibold tracking-wider text-stone-900 uppercase">Select Size</span>
-              <span className="text-stone-500 underline cursor-pointer">Size Guide (UAE Standard)</span>
+              <span className="text-stone-500 underline cursor-pointer">Size Guide (Standard Pakistani Sizing)</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {product.sizes.map(size => (
@@ -241,8 +273,8 @@ export default function ProductDetail() {
           <div className="mt-8 pt-6 border-t border-stone-200 grid grid-cols-3 gap-3 text-center">
             <div className="flex flex-col items-center">
               <Truck className="w-4 h-4 text-stone-700 mb-1" />
-              <span className="text-[11px] font-semibold text-stone-800">Same-Day UAE</span>
-              <span className="text-[10px] text-stone-500">Dubai & Abu Dhabi</span>
+              <span className="text-[11px] font-semibold text-stone-800">Fast Courier Delivery</span>
+              <span className="text-[10px] text-stone-500">TCS / Leopard Nationwide</span>
             </div>
             <div className="flex flex-col items-center">
               <ShieldCheck className="w-4 h-4 text-stone-700 mb-1" />

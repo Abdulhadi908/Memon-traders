@@ -31,16 +31,8 @@ export default function AdminLayout() {
   const pendingOrders = orders.filter((o: any) => o.status === 'Pending' || o.status === 'Processing').length;
   const lowStockCount = products.filter((p: any) => p.stock < 10).length;
 
-  React.useEffect(() => {
-    const token = localStorage.getItem('memon_admin_token');
-    if (!token) {
-      navigate('/admin/login');
-    }
-  }, [navigate]);
-
   const handleAdminLogout = () => {
-    localStorage.removeItem('memon_admin_token');
-    navigate('/admin/login');
+    navigate('/');
   };
 
   const menuItems = [

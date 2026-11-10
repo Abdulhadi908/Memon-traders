@@ -41,8 +41,8 @@ export default function AdminMemberships() {
                 <td className="px-5 py-3.5">
                   <span className="font-bold text-amber-700">{c.vipTier || 'Gold'} Tier</span>
                 </td>
-                <td className="px-5 py-3.5 font-bold text-stone-900">AED {c.totalSpent.toLocaleString()}</td>
-                <td className="px-5 py-3.5 text-[11px] text-stone-500">Free Dubai Delivery, 10% Off Atelier Pieces</td>
+                <td className="px-5 py-3.5 font-bold text-stone-900">Rs. {c.totalSpent.toLocaleString()}</td>
+                <td className="px-5 py-3.5 text-[11px] text-stone-500">Free Nationwide Delivery (Pakistan), 10% Off Atelier Pieces</td>
                 <td className="px-5 py-3.5 text-right">
                   <button
                     onClick={() => toggleCustomerVip(c.id)}

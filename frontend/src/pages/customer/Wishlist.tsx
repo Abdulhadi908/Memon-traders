@@ -55,7 +55,7 @@ export default function Wishlist() {
                     {product.name}
                   </h3>
                 </Link>
-                <p className="text-xs font-semibold text-stone-900 mt-1">AED {product.price}</p>
+                <p className="text-xs font-semibold text-stone-900 mt-1">Rs. {product.price.toLocaleString()}</p>
 
                 <button
                   onClick={() => addToCart(product.id, 1, product.sizes[0] || 'Standard', product.color)}

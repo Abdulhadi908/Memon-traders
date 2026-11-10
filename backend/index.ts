@@ -296,22 +296,13 @@ app.put('/api/user/change-password', authenticateUser, async (req: Request, res:
 
 // ---------------- ADMIN ROUTES ----------------
 
-// 6. Admin Secure Login
+// 6. Admin Direct Access (No Password Required)
 app.post('/api/auth/admin-login', async (req: Request, res: Response) => {
   try {
-    const { accessKey } = req.body;
-    if (!accessKey) {
-      return res.status(400).json({ error: 'Admin Master Security Key is required' });
-    }
-
-    if (accessKey !== ADMIN_PASSWORD_HASH) {
-      return res.status(403).json({ error: 'Unauthorized Access. Invalid security key.' });
-    }
-
     const token = jwt.sign(
       { role: 'admin', user: 'Administrator' },
       JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: '30d' }
     );
 
     res.json({
@@ -358,6 +349,15 @@ app.delete('/api/products/:id', (req: Request, res: Response) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// ----------- SERVE FRONTEND IN PRODUCTION -----------
+const frontendDistPath = path.join(__dirname, '..', 'frontend', 'dist');
+if (fs.existsSync(frontendDistPath)) {
+  app.use(express.static(frontendDistPath));
+  app.get('*', (req: Request, res: Response) => {
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Backend Server running on http://localhost:${PORT}`);

@@ -47,7 +47,7 @@ export default function AdminSettings() {
               <input
                 type="text"
                 required
-                placeholder="e.g. DUBAI20"
+                placeholder="e.g. MEMON20"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 className="w-full border border-stone-200 rounded px-3 py-2 text-stone-900 uppercase font-mono focus:outline-none focus:border-stone-400"
@@ -68,7 +68,7 @@ export default function AdminSettings() {
             </div>
 
             <div>
-              <label className="block text-stone-700 font-medium mb-1">Minimum Order Amount (AED)</label>
+              <label className="block text-stone-700 font-medium mb-1">Minimum Order Amount (Rs.)</label>
               <input
                 type="number"
                 required
@@ -114,7 +114,7 @@ export default function AdminSettings() {
                     <td className="px-5 py-3.5 font-bold text-amber-700">
                       {d.percentage}% OFF
                     </td>
-                    <td className="px-5 py-3.5 font-medium">AED {d.minPurchase}</td>
+                    <td className="px-5 py-3.5 font-medium">Rs. {d.minPurchase.toLocaleString()}</td>
                     <td className="px-5 py-3.5">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                         d.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-500'
@@ -141,7 +141,7 @@ export default function AdminSettings() {
             <div>
               <h3 className="font-serif font-bold text-white text-base">Reset Demo Environment</h3>
               <p className="text-xs text-stone-400 mt-1">
-                Restores original UAE luxury mock products, orders, and customer records.
+                Restores original Memon Traders Pakistani catalog, orders, and customer records.
               </p>
             </div>
             <button

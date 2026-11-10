@@ -51,7 +51,7 @@ export interface Order {
   shipping: number;
   total: number;
   status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
-  paymentMethod: 'COD' | 'JazzCash' | 'EasyPaisa' | 'HBL-Card';
+  paymentMethod: 'COD' | 'Card';
   date: string;
   trackingNumber: string;
 }
@@ -235,25 +235,12 @@ export const useStore = create<AppStoreState>()(
       expenses: INITIAL_EXPENSES,
       discounts: INITIAL_DISCOUNTS,
       
-      cart: [
-        { productId: 'prod-1', quantity: 1, selectedSize: '54', selectedColor: 'Jet Black' }
-      ],
-      wishlist: ['prod-2', 'prod-5'],
+      cart: [],
+      wishlist: [],
       activeCurrency: 'PKR',
       searchQuery: '',
       
-      currentUser: {
-        id: 'cust-demo',
-        name: 'Sara Memon',
-        email: 'sara.memon@gmail.com',
-        phone: '+92 300 2345678',
-        address: 'House #42, Street 10, DHA Phase 5',
-        city: 'Karachi',
-        province: 'Sindh',
-        postalCode: '75500',
-        isVip: true,
-        vipTier: 'DarazClub'
-      },
+      currentUser: null,
 
       loginUser: (user, token) => {
         localStorage.setItem('memon_user_token', token);
@@ -416,7 +403,7 @@ export const useStore = create<AppStoreState>()(
       })
     }),
     {
-      name: 'memon_traders_daraz_real_v7',
+      name: 'memon_traders_karachi_v9',
     }
   )
 );

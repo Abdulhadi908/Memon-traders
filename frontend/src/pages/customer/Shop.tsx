@@ -132,8 +132,8 @@ export default function Shop() {
         <div className="flex items-center gap-2.5 p-2">
           <Zap className="w-5 h-5 text-orange-600 flex-shrink-0" />
           <div>
-            <p className="font-bold text-stone-800">Fast 2-3 Day Delivery</p>
-            <p className="text-[10px] text-stone-400">Karachi, Lahore & Islamabad</p>
+            <p className="font-bold text-stone-800">Fast Karachi Delivery</p>
+            <p className="text-[10px] text-stone-400">Doorstep delivery across Karachi</p>
           </div>
         </div>
       </section>
@@ -278,33 +278,6 @@ export default function Shop() {
               </div>
             );
           })}
-        </div>
-      </section>
-
-      {/* 6. Admin Sync Verification Banner */}
-      <section className="bg-gradient-to-r from-stone-900 to-stone-800 rounded-lg p-5 text-white flex flex-col sm:flex-row justify-between items-center gap-4 shadow-sm">
-        <div>
-          <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest">
-            Daraz Marketplace Architecture Live
-          </span>
-          <h3 className="text-base font-bold mt-0.5">Connected Admin Business Portal</h3>
-          <p className="text-xs text-stone-400 mt-1">
-            Any product created, price discounted, or order fulfilled in the Admin immediately syncs here via localStorage.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Link
-            to="/admin/products"
-            className="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-stone-950 font-bold text-xs rounded transition"
-          >
-            Manage Products in Admin
-          </Link>
-          <Link
-            to="/cart"
-            className="px-4 py-2 bg-stone-700 hover:bg-stone-600 text-white font-semibold text-xs rounded transition"
-          >
-            Go to Cart
-          </Link>
         </div>
       </section>
     </div>

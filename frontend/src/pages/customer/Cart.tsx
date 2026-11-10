@@ -37,7 +37,7 @@ export default function Cart() {
     }
 
     if (subtotal < found.minPurchase) {
-      setPromoError(`Code requires minimum order of AED ${found.minPurchase}`);
+      setPromoError(`Code requires minimum order of Rs. ${found.minPurchase}`);
       return;
     }
 
@@ -128,10 +128,10 @@ export default function Cart() {
 
                     <div className="text-right">
                       <span className="text-sm font-semibold text-stone-900">
-                        AED {product!.price * quantity}
+                        Rs. {(product!.price * quantity).toLocaleString()}
                       </span>
                       {quantity > 1 && (
-                        <p className="text-[10px] text-stone-400">AED {product!.price} each</p>
+                        <p className="text-[10px] text-stone-400">Rs. {product!.price.toLocaleString()} each</p>
                       )}
                     </div>
                   </div>
@@ -144,7 +144,7 @@ export default function Cart() {
             <Link to="/shop" className="underline hover:text-stone-900">
               ← Continue Shopping
             </Link>
-            <span>Orders above AED 200 qualify for complimentary delivery</span>
+            <span>Orders above Rs. 2,000 qualify for complimentary delivery</span>
           </div>
         </div>
 
@@ -184,27 +184,27 @@ export default function Cart() {
             <div className="mt-6 space-y-3 text-xs text-stone-600 border-t border-stone-100 pt-4">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span className="font-medium text-stone-900">AED {subtotal.toFixed(2)}</span>
+                <span className="font-medium text-stone-900">Rs. {subtotal.toLocaleString()}</span>
               </div>
               {discountPercent > 0 && (
                 <div className="flex justify-between text-emerald-600 font-medium">
                   <span>Discount ({discountPercent}%)</span>
-                  <span>- AED {discountAmount.toFixed(2)}</span>
+                  <span>- Rs. {discountAmount.toLocaleString()}</span>
                 </div>
               )}
               <div className="flex justify-between">
                 <span>Estimated Shipping</span>
                 <span className="font-medium text-stone-900">
-                  {shippingFee === 0 ? <strong className="text-emerald-700 font-medium">FREE</strong> : `AED ${shippingFee}`}
+                  {shippingFee === 0 ? <strong className="text-emerald-700 font-medium">FREE</strong> : `Rs. ${shippingFee}`}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>Estimated Tax (5% VAT)</span>
+                <span>Sales Tax / GST</span>
                 <span className="text-stone-500">Included</span>
               </div>
               <div className="flex justify-between text-base font-serif font-semibold text-stone-900 pt-3 border-t border-stone-200">
                 <span>Total Due</span>
-                <span>AED {total.toFixed(2)}</span>
+                <span>Rs. {total.toLocaleString()}</span>
               </div>
             </div>
 
