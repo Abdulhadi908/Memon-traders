@@ -334,6 +334,15 @@ export const useStore = create<AppStoreState>()(
           notifyNewOrder(newOrder);
         } catch {}
 
+        // Persist order to MongoDB Atlas via Express API
+        try {
+          fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newOrder)
+          }).catch(err => console.log('MongoDB order sync notice:', err));
+        } catch {}
+
         return newOrder;
       },
 
@@ -382,9 +391,14 @@ export const useStore = create<AppStoreState>()(
         orders: state.orders.filter(o => o.id !== orderId)
       })),
 
-      completeAndRemoveOrder: (orderId) => set((state) => ({
-        orders: state.orders.filter(o => o.id !== orderId)
-      })),
+      completeAndRemoveOrder: (orderId) => {
+        try {
+          fetch(`/api/orders/${orderId}`, { method: 'DELETE' }).catch(() => {});
+        } catch {}
+        set((state) => ({
+          orders: state.orders.filter(o => o.id !== orderId)
+        }));
+      },
 
       addExpense: (expense) => set((state) => ({
         expenses: [{ ...expense, id: `exp-${Date.now()}` }, ...state.expenses]
