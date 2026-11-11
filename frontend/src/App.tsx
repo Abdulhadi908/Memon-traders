@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import CustomerLayout from './layouts/CustomerLayout';
 import AdminLayout from './layouts/AdminLayout';
+import { useStore } from './store';
 
 // Customer pages
 import Home from './pages/customer/Home';
@@ -27,6 +29,14 @@ import AdminExpenses from './pages/admin/Expenses';
 import AdminSettings from './pages/admin/Settings';
 
 function App() {
+  const { fetchProductsFromDB, fetchOrdersFromDB } = useStore();
+
+  useEffect(() => {
+    // Initial sync with MongoDB Atlas Express routes
+    fetchProductsFromDB();
+    fetchOrdersFromDB();
+  }, [fetchProductsFromDB, fetchOrdersFromDB]);
+
   return (
     <Router>
       <Routes>

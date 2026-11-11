@@ -148,6 +148,8 @@ interface AppStoreState {
 
   toggleCustomerVip: (customerId: string) => void;
   resetToDemoData: () => void;
+  fetchProductsFromDB: () => Promise<void>;
+  fetchOrdersFromDB: () => Promise<void>;
 }
 
 // Category images with precise product matches - 100% Faceless
@@ -352,24 +354,75 @@ export const useStore = create<AppStoreState>()(
         currentUser: state.currentUser ? { ...state.currentUser, isVip: true, vipTier: tier } : null
       })),
 
-      addProduct: (prod) => set((state) => {
+      fetchProductsFromDB: async () => {
+        try {
+          const res = await fetch('/api/products');
+          const data = await res.json();
+          if (data?.products && Array.isArray(data.products) && data.products.length > 0) {
+            set({ products: data.products });
+          }
+        } catch (err) {
+          console.log('MongoDB product fetch notice:', err);
+        }
+      },
+
+      fetchOrdersFromDB: async () => {
+        try {
+          const res = await fetch('/api/orders');
+          const data = await res.json();
+          if (data?.orders && Array.isArray(data.orders)) {
+            set({ orders: data.orders });
+          }
+        } catch (err) {
+          console.log('MongoDB order fetch notice:', err);
+        }
+      },
+
+      addProduct: (prod) => {
         const newId = `prod-${Date.now()}`;
-        return { products: [{ ...prod, id: newId }, ...state.products] };
-      }),
+        const newProd = { ...prod, id: newId };
+        set((state) => ({ products: [newProd, ...state.products] }));
+        fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(prod)
+        })
+          .then(() => get().fetchProductsFromDB())
+          .catch((err) => console.log('MongoDB addProduct sync notice:', err));
+      },
 
-      updateProduct: (id, updatedFields) => set((state) => ({
-        products: state.products.map(p => p.id === id ? { ...p, ...updatedFields } : p)
-      })),
+      updateProduct: (id, updatedFields) => {
+        set((state) => ({
+          products: state.products.map(p => p.id === id ? { ...p, ...updatedFields } : p)
+        }));
+        fetch(`/api/products/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedFields)
+        }).catch(() => {});
+      },
 
-      deleteProduct: (id) => set((state) => ({
-        products: state.products.filter(p => p.id !== id),
-        cart: state.cart.filter(c => c.productId !== id),
-        wishlist: state.wishlist.filter(w => w !== id)
-      })),
+      deleteProduct: (id) => {
+        set((state) => ({
+          products: state.products.filter(p => p.id !== id),
+          cart: state.cart.filter(c => c.productId !== id),
+          wishlist: state.wishlist.filter(w => w !== id)
+        }));
+        fetch(`/api/products/${id}`, { method: 'DELETE' })
+          .then(() => get().fetchProductsFromDB())
+          .catch(() => {});
+      },
 
-      updateStock: (id, newStock) => set((state) => ({
-        products: state.products.map(p => p.id === id ? { ...p, stock: newStock } : p)
-      })),
+      updateStock: (id, newStock) => {
+        set((state) => ({
+          products: state.products.map(p => p.id === id ? { ...p, stock: newStock } : p)
+        }));
+        fetch(`/api/products/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ stock: newStock })
+        }).catch(() => {});
+      },
 
       addCategory: (cat) => set((state) => ({
         categories: [...state.categories, { ...cat, id: `cat-${Date.now()}` }]
@@ -383,21 +436,31 @@ export const useStore = create<AppStoreState>()(
         categories: state.categories.filter(c => c.id !== id)
       })),
 
-      updateOrderStatus: (orderId, status) => set((state) => ({
-        orders: state.orders.map(o => o.id === orderId ? { ...o, status } : o)
-      })),
+      updateOrderStatus: (orderId, status) => {
+        set((state) => ({
+          orders: state.orders.map(o => o.id === orderId ? { ...o, status } : o)
+        }));
+        fetch(`/api/orders/${orderId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        }).catch(() => {});
+      },
 
-      deleteOrder: (orderId) => set((state) => ({
-        orders: state.orders.filter(o => o.id !== orderId)
-      })),
-
-      completeAndRemoveOrder: (orderId) => {
-        try {
-          fetch(`/api/orders/${orderId}`, { method: 'DELETE' }).catch(() => {});
-        } catch {}
+      deleteOrder: (orderId) => {
         set((state) => ({
           orders: state.orders.filter(o => o.id !== orderId)
         }));
+        fetch(`/api/orders/${orderId}`, { method: 'DELETE' }).catch(() => {});
+      },
+
+      completeAndRemoveOrder: (orderId) => {
+        set((state) => ({
+          orders: state.orders.filter(o => o.id !== orderId)
+        }));
+        fetch(`/api/orders/${orderId}`, { method: 'DELETE' })
+          .then(() => get().fetchOrdersFromDB())
+          .catch(() => {});
       },
 
       addExpense: (expense) => set((state) => ({
