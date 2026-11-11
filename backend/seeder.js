@@ -151,7 +151,11 @@ const sampleOrders = [
     items: [
       {
         productId: "sample-1",
+        productName: "Luxury Embroidered Lawn 3-Piece Stitched Suit",
+        productPrice: 7500,
+        productImage: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&q=80&w=400",
         quantity: 1,
+        lineTotal: 7500,
         selectedSize: "Medium",
         selectedColor: "Deep Maroon / Gold Zari",
         product: {
@@ -180,7 +184,11 @@ const sampleOrders = [
     items: [
       {
         productId: "sample-2",
+        productName: "Royal Dubai Velvet Abaya with Scarf",
+        productPrice: 11200,
+        productImage: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&q=80&w=400",
         quantity: 1,
+        lineTotal: 11200,
         selectedSize: "54",
         selectedColor: "Jet Black",
         product: {

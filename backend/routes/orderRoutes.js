@@ -26,8 +26,22 @@ router.post('/', async (req, res) => {
     const generatedId = orderData.id || `PK-${Math.floor(100000 + Math.random() * 900000)}`;
     const tracking = orderData.trackingNumber || `TCS-${Math.floor(100000 + Math.random() * 900000)}-PK`;
 
+    // Flatten product name, price, image and line total into each item for clear MongoDB visibility
+    const enrichedItems = (orderData.items || []).map((item) => ({
+      productId: item.productId || '',
+      productName: item.product?.name || item.productName || 'Unknown Product',
+      productPrice: item.product?.price || item.productPrice || 0,
+      productImage: item.product?.image || item.productImage || '',
+      quantity: item.quantity || 1,
+      lineTotal: (item.product?.price || item.productPrice || 0) * (item.quantity || 1),
+      selectedSize: item.selectedSize || 'Standard',
+      selectedColor: item.selectedColor || 'Default',
+      product: item.product || null
+    }));
+
     const newOrder = await Order.create({
       ...orderData,
+      items: enrichedItems,
       orderId: generatedId,
       trackingNumber: tracking,
       date: orderData.date ? new Date(orderData.date) : new Date()
@@ -36,6 +50,7 @@ router.post('/', async (req, res) => {
     console.log(`\n🔔 [MONGODB ATLAS] NEW ORDER SAVED:`);
     console.log(`   Order ID: #${generatedId} (Mongo _id: ${newOrder._id})`);
     console.log(`   Customer: ${newOrder.customerName} (${newOrder.city})`);
+    console.log(`   Items: ${enrichedItems.map(i => `${i.productName} x${i.quantity}`).join(', ')}`);
     console.log(`   Amount: Rs. ${newOrder.total}`);
     console.log(`   Payment: ${newOrder.paymentMethod}`);
     console.log(`   Courier Tracking: ${tracking}\n`);
